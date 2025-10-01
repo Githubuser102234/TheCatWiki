@@ -1,425 +1,347 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Cats Wiki — Copyable Paragraph Links</title>
-
-<!-- Marked for Markdown, Highlight.js for code blocks -->
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<link rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/highlight.js@11.8.0/styles/github.min.css">
-<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.8.0/lib/highlight.min.js"></script>
-
-<style>
-  :root{
-    --bg:#0f1720; --card:#0b1220; --muted:#9aa4b2; --accent:#f59e0b;
-    --glass: rgba(255,255,255,0.03);
-    color-scheme: dark;
-  }
-  html,body{height:100%; margin:0; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
-  body{background: linear-gradient(180deg,#071021 0%, #0f1720 100%); color:#e6eef6; padding:20px;}
-  .wrap{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:280px 1fr;gap:20px;}
-  header{grid-column:1/-1; display:flex; gap:16px; align-items:center; margin-bottom:6px;}
-  header h1{font-size:20px;margin:0}
-  header p{margin:0;color:var(--muted);font-size:13px}
-  .toc{background:var(--glass); border-radius:10px; padding:14px; height:calc(100vh - 150px); overflow:auto}
-  .toc h3{margin:0 0 8px 0; font-size:14px}
-  .toc ul{padding-left:6px; margin:0; list-style:none}
-  .toc a{display:block; padding:6px 8px; border-radius:6px; color:var(--muted); text-decoration:none; font-size:14px}
-  .toc a:hover{background:rgba(255,255,255,0.02); color:#fff}
-  main{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:18px;border-radius:12px; overflow:auto; max-height:calc(100vh - 120px)}
-  section.card{margin-bottom:20px;padding:14px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent); box-shadow: 0 2px 12px rgba(2,6,23,0.6)}
-  .section-header{display:flex; align-items:center; gap:8px}
-  .section-header h2{margin:0; font-size:18px}
-  .link-icon{margin-left:auto; display:flex; gap:6px; align-items:center}
-  .link-btn{background:transparent;border:0;color:var(--muted); padding:6px;border-radius:6px; cursor:pointer; display:inline-flex; align-items:center; gap:6px}
-  .link-btn:hover{background:rgba(255,255,255,0.02); color:var(--accent)}
-  small.desc{color:var(--muted); display:block;margin-top:6px}
-  .md-render{margin-top:12px; line-height:1.6}
-  .md-render img{max-width:100%; border-radius:8px; cursor:pointer}
-  .toolbar{display:flex;gap:8px;margin-bottom:10px}
-  .btn{background:transparent;border:1px solid rgba(255,255,255,0.04); padding:8px 10px;border-radius:8px;color:var(--muted); cursor:pointer}
-  .btn.primary{border-color:var(--accent); color:var(--accent)}
-  textarea.md-editor{width:100%; min-height:160px; background:transparent; color:inherit;border:1px dashed rgba(255,255,255,0.03); padding:10px;border-radius:8px; font-family:monospace; resize:vertical}
-  .image-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(160px,1fr)); gap:10px;margin-top:10px}
-  .image-grid img{width:100%; height:120px; object-fit:cover; border-radius:8px; cursor:pointer; display:block}
-  .code{background:#021224;padding:12px;border-radius:8px;overflow:auto}
-  .toast{position:fixed; right:20px; bottom:20px; background:#072032; color:#dff8ff; padding:10px 14px; border-radius:8px; box-shadow:0 6px 20px rgba(2,8,23,0.7); display:none}
-  .highlighted{outline:4px solid rgba(245,158,11,0.12); transition:outline .25s}
-  /* Lightbox */
-  .lightbox{position:fixed; inset:0; background:rgba(0,0,0,0.8); display:none;align-items:center;justify-content:center;z-index:60}
-  .lightbox img{max-width:95%; max-height:95%; border-radius:8px}
-  @media(max-width:880px){.wrap{grid-template-columns:1fr;}.toc{height:auto; order:2}.header{flex-direction:column}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐱 The Cat Megawiki</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for aesthetic enhancements */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+            background-image: linear-gradient(135deg, #f0f4f8 0%, #e0e8f0 100%);
+        }
+        .content-block {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        }
+        .content-block:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
-<body>
-<div class="wrap">
-  <header>
-    <div>
-      <h1>Cats Wiki</h1>
-      <p>Small, fast wiki about cats with markdown, images, and copiable paragraph links (use <code>?paragraph=ID</code>).</p>
+<body class="p-4 sm:p-8">
+
+    <!-- Header Section -->
+    <header class="text-center mb-10 p-6 bg-white rounded-2xl shadow-xl">
+        <h1 class="text-5xl sm:text-6xl font-extrabold text-indigo-700 tracking-tight mb-2">
+            <span class="text-yellow-500">🐱</span> Cat Megawiki
+        </h1>
+        <p class="text-xl text-gray-600">The Majestic Domestic Feline: Facts, History, and Care</p>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-4xl mx-auto">
+        
+        <!-- Introduction -->
+        <div id="intro" class="content-block bg-white p-6 rounded-2xl mb-8">
+            <p class="text-lg text-gray-700 leading-relaxed font-medium">
+                The **domestic cat** (*Felis catus*) is a small, typically furry, carnivorous mammal. They are often called house cats when kept as indoor pets or simply cats when there is no need to distinguish them from other felids and felines. They are valued by humans for companionship and their ability to hunt pests.
+            </p>
+            <div class="mt-4 flex justify-end">
+                <button onclick="copyShareLink('intro')" class="flex items-center text-sm text-indigo-500 hover:text-indigo-700 font-semibold p-1 rounded-full bg-indigo-50/50 hover:bg-indigo-100 transition duration-200">
+                    <span class="mr-1">Share Link</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.814a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                </button>
+            </div>
+        </div>
+
+        <h2 class="text-3xl font-bold text-gray-800 mb-6 mt-10">1. Biology and Anatomy</h2>
+
+        <!-- Sensory Marvels -->
+        <div id="biology_senses" class="content-block bg-white p-6 rounded-2xl mb-6">
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">Sensory Marvels</h3>
+            <p class="text-gray-700 leading-relaxed">
+                Cats possess exceptional sensory capabilities that make them highly efficient hunters, even in low light. Their eyes have a **tapetum lucidum**, a layer of tissue behind the retina that reflects visible light back through the retina, increasing the light available to the photoreceptors. This is why a cat's eyes often appear to glow in the dark.
+            </p>
+            <div class="mt-4 flex justify-end">
+                <button onclick="copyShareLink('biology_senses')" class="text-indigo-500 hover:text-indigo-700 p-1">🔗</button>
+            </div>
+        </div>
+        
+        <!-- Flehmen Response -->
+        <div id="biology_flehmen" class="content-block bg-white p-6 rounded-2xl mb-6">
+            <p class="text-gray-700 leading-relaxed">
+                Despite their reputation for being vision-dominant, a cat's sense of smell is far more potent than a human's, utilizing both their noses and a **vomeronasal organ** (or Jacobson's organ) located on the roof of their mouth. When a cat makes the "Flehmen response" (a curled lip look), it is using this secondary organ to analyze complex scents like pheromones.
+            </p>
+            <div class="mt-4 flex justify-end">
+                <button onclick="copyShareLink('biology_flehmen')" class="text-indigo-500 hover:text-indigo-700 p-1">🔗</button>
+            </div>
+        </div>
+
+        <!-- The Purr -->
+        <div id="biology_purr" class="content-block bg-white p-6 rounded-2xl mb-6">
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">The Purr and Vocalization</h3>
+            <p class="text-gray-700 leading-relaxed">
+                Purring is one of the most distinctive sounds made by cats, and while it most commonly signifies contentment, it can also be used when the cat is injured, stressed, or nursing. The sound is created by rapid oscillations of the muscles in the larynx, vibrating at 25 to 150 vibrations per second.
+            </p>
+            <div class="mt-4 flex justify-end">
+                <button onclick="copyShareLink('biology_purr')" class="text-indigo-500 hover:text-indigo-700 p-1">🔗</button>
+            </div>
+        </div>
+        
+        <!-- Vocalization -->
+        <div id="biology_vocalization" class="content-block bg-white p-6 rounded-2xl mb-6">
+            <p class="text-gray-700 leading-relaxed">
+                Unlike many other big cat species, domestic cats are unique in their ability to purr continuously on both the inhale and the exhale. They use a wide range of vocalizations, including meowing, trilling, hissing, and growling, often fine-tuning their "meows" to manipulate their human owners, a behavior rarely used with other cats.
+            </p>
+            <div class="mt-4 flex justify-end">
+                <button onclick="copyShareLink('biology_vocalization')" class="text-indigo-500 hover:text-indigo-700 p-1">🔗</button>
+            </div>
+        </div>
+
+        <h2 class="text-3xl font-bold text-gray-800 mb-6 mt-10">2. History and Domestication</h2>
+
+        <!-- Ancient Origins -->
+        <div id="history_origins" class="content-block bg-white p-6 rounded-2xl mb-6">
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">The Ancient Origins</h3>
+            <p class="text-gray-700 leading-relaxed">
+                The cat's story of domestication began approximately **9,500 years ago** in the Near East, specifically in the Fertile Crescent. This timeline is supported by archaeological evidence, including the co-burial of a human and a cat on the island of Cyprus. This coincided with the rise of agricultural settlements, where cats were naturally drawn to rodent populations thriving on stored grains.
+            </p>
+            <div class="mt-4 flex justify-end">
+                <button onclick="copyShareLink('history_origins')" class="text-indigo-500 hover:text-indigo-700 p-1">🔗</button>
+            </div>
+        </div>
+
+        <!-- Role in Ancient Egypt -->
+        <div id="history_egypt" class="content-block bg-white p-6 rounded-2xl mb-6">
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">Role in Ancient Egypt</h3>
+            <p class="text-gray-700 leading-relaxed">
+                The Ancient Egyptians played a pivotal role in solidifying the cat's status. They revered cats, viewing them as protectors against snakes and pests, and often associated them with the goddess **Bastet**. Cats were commonly mummified, sometimes wearing golden jewelry, and harming a cat was considered a serious crime.
+            </p>
+            <div class="mt-4 flex justify-end">
+                <button onclick="copyShareLink('history_egypt')" class="text-indigo-500 hover:text-indigo-700 p-1">🔗</button>
+            </div>
+        </div>
+
+        <!-- Global Spread -->
+        <div id="history_spread" class="content-block bg-white p-6 rounded-2xl mb-6">
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">Global Spread</h3>
+            <p class="text-gray-700 leading-relaxed">
+                From Egypt, cats were spread globally via trade routes, carried aboard ships to control rodent populations. They reached Europe and Asia, adapting to local environments and eventually developing into the diverse breeds we recognize today, though natural selection drove breed formation long before humans began controlled breeding.
+            </p>
+            <div class="mt-4 flex justify-end">
+                <button onclick="copyShareLink('history_spread')" class="text-indigo-500 hover:text-indigo-700 p-1">🔗</button>
+            </div>
+        </div>
+
+        <h2 class="text-3xl font-bold text-gray-800 mb-6 mt-10">3. Cat Behavior and Communication</h2>
+
+        <!-- Hunting and Play -->
+        <div id="behavior_hunting" class="content-block bg-white p-6 rounded-2xl mb-6">
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">Hunting and Play</h3>
+            <p class="text-gray-700 leading-relaxed">
+                Cats are obligate carnivores and retain a powerful hunting instinct, regardless of how well-fed they are. Playing with string, toys, or laser pointers is not merely amusement; it is a vital outlet for this instinct, mimicking the entire **hunt-kill cycle**.
+            </p>
+            <div class="mt-4 flex justify-end">
+                <button onclick="copyShareLink('behavior_hunting')" class="text-indigo-500 hover:text-indigo-700 p-1">🔗</button>
+            </div>
+        </div>
+
+        <!-- Body Language Table -->
+        <div id="behavior_bodylanguage" class="content-block bg-white p-6 rounded-2xl mb-6">
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">Common Body Language Cues</h3>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Behavior</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Meaning</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Slow Blink</td>
+                            <td class="px-6 py-4 whitespace-normal text-sm text-gray-700">Affection, trust, the "cat kiss."</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Tail Upright</td>
+                            <td class="px-6 py-4 whitespace-normal text-sm text-gray-700">Contentment, confidence, and friendly greeting.</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Kneading</td>
+                            <td class="px-6 py-4 whitespace-normal text-sm text-gray-700">Comfort, satisfaction, a throwback to nursing.</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Tail Twitching</td>
+                            <td class="px-6 py-4 whitespace-normal text-sm text-gray-700">Agitation, excitement, or predatory focus.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="mt-4 flex justify-end">
+                <button onclick="copyShareLink('behavior_bodylanguage')" class="text-indigo-500 hover:text-indigo-700 p-1">🔗</button>
+            </div>
+        </div>
+
+        <!-- Marking and Territory -->
+        <div id="behavior_marking" class="content-block bg-white p-6 rounded-2xl mb-6">
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">Marking and Territory</h3>
+            <p class="text-gray-700 leading-relaxed">
+                Cats are highly territorial animals, marking their area through several means, including scent glands located in their cheeks, paws, and base of the tail. They rub these glands on objects (and humans) in a process called **bunting** or head-butting, depositing pheromones to signal ownership and security.
+            </p>
+            <div class="mt-4 flex justify-end">
+                <button onclick="copyShareLink('behavior_marking')" class="text-indigo-500 hover:text-indigo-700 p-1">🔗</button>
+            </div>
+        </div>
+
+        <h2 class="text-3xl font-bold text-gray-800 mb-6 mt-10">4. Popular Cat Breeds</h2>
+
+        <!-- The Maine Coon -->
+        <div id="breeds_mainecoon" class="content-block bg-white p-6 rounded-2xl mb-6">
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">The Maine Coon</h3>
+            <p class="text-gray-700 leading-relaxed">
+                Known as the "**Gentle Giant**," the **Maine Coon** is one of the largest domestic cat breeds. They are famous for their intelligence, thick shaggy coat, and bushy tail, perfectly adapted for harsh winter climates. Despite their large size, they possess a sweet, dog-like temperament.
+            </p>
+            <div class="mt-4 flex justify-end">
+                <button onclick="copyShareLink('breeds_mainecoon')" class="text-indigo-500 hover:text-indigo-700 p-1">🔗</button>
+            </div>
+        </div>
+
+        <!-- The Siamese -->
+        <div id="breeds_siamese" class="content-block bg-white p-6 rounded-2xl mb-6">
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">The Siamese</h3>
+            <p class="text-gray-700 leading-relaxed">
+                Easily recognizable by their striking blue eyes and 'points' (dark coloration on the extremities like the ears, paws, and tail), the **Siamese** is one of the oldest and most vocal cat breeds. They are highly social, demanding companions, often described as having a dog-like need for attention.
+            </p>
+            <div class="mt-4 flex justify-end">
+                <button onclick="copyShareLink('breeds_siamese')" class="text-indigo-500 hover:text-indigo-700 p-1">🔗</button>
+            </div>
+        </div>
+
+        <!-- The Scottish Fold -->
+        <div id="breeds_scottishfold" class="content-block bg-white p-6 rounded-2xl mb-6">
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">The Scottish Fold</h3>
+            <p class="text-gray-700 leading-relaxed">
+                The **Scottish Fold** is characterized by its dominant gene mutation that causes its ear cartilage to contain a fold, bending the ears forward and down toward the head. They are known for their quiet, laid-back nature and their unusual habit of sitting upright like an owl or a small Buddha.
+            </p>
+            <div class="mt-4 flex justify-end">
+                <button onclick="copyShareLink('breeds_scottishfold')" class="text-indigo-500 hover:text-indigo-700 p-1">🔗</button>
+            </div>
+        </div>
+
+        <h2 class="text-3xl font-bold text-gray-800 mb-6 mt-10">5. Cat Care and Health</h2>
+
+        <!-- Dietary Needs -->
+        <div id="care_diet" class="content-block bg-white p-6 rounded-2xl mb-6">
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">Dietary Needs</h3>
+            <p class="text-gray-700 leading-relaxed">
+                As **obligate carnivores**, cats require a diet primarily composed of animal-based protein. Unlike humans, they cannot produce certain essential amino acids (like **taurine**) internally, which must be supplemented through meat in their diet. A taurine deficiency can lead to serious health issues, including blindness and heart failure.
+            </p>
+            <div class="mt-4 flex justify-end">
+                <button onclick="copyShareLink('care_diet')" class="text-indigo-500 hover:text-indigo-700 p-1">🔗</button>
+            </div>
+        </div>
+
+        <!-- Essential Veterinary Care -->
+        <div id="care_vet" class="content-block bg-white p-6 rounded-2xl mb-6">
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">Essential Veterinary Care</h3>
+            <p class="text-gray-700 leading-relaxed">
+                Routine veterinary check-ups are crucial for long-term health. Core vaccinations typically protect against Feline Panleukopenia (distemper), Feline Viral Rhinotracheitis (herpesvirus), and Feline Calicivirus. Annual check-ups help catch conditions early, especially as cats are masters at hiding signs of pain or illness.
+            </p>
+            <div class="mt-4 flex justify-end">
+                <button onclick="copyShareLink('care_vet')" class="text-indigo-500 hover:text-indigo-700 p-1">🔗</button>
+            </div>
+        </div>
+
+        <!-- Environmental Enrichment -->
+        <div id="care_enrichment" class="content-block bg-white p-6 rounded-2xl mb-6">
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">Environmental Enrichment</h3>
+            <p class="text-gray-700 leading-relaxed">
+                Since many domestic cats live entirely indoors, providing environmental enrichment is essential to prevent boredom and behavioral problems. This includes vertical space (cat trees, shelves), scratching posts (both vertical and horizontal), and rotating toys that encourage their natural hunting instincts.
+            </p>
+            <div class="mt-4 flex justify-end">
+                <button onclick="copyShareLink('care_enrichment')" class="text-indigo-500 hover:text-indigo-700 p-1">🔗</button>
+            </div>
+        </div>
+        
+        <!-- Image Placeholder -->
+        <div id="final_image" class="content-block bg-white p-6 rounded-2xl mb-12 flex justify-center items-center h-64">
+             <img src="https://placehold.co/600x400/87CEEB/000000?text=Majestic+Feline" 
+                  alt="A placeholder image of a charismatic cat looking directly at the camera" 
+                  onerror="this.onerror=null;this.src='https://placehold.co/600x400/FACC15/000000?text=Cat+Image+Missing';"
+                  class="rounded-xl shadow-lg w-full max-w-md h-auto object-cover"/>
+            <div class="absolute bottom-4 right-4 mt-4 flex justify-end">
+                <button onclick="copyShareLink('final_image')" class="text-indigo-500 hover:text-indigo-700 p-1">🔗</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Success Message Container (Hidden by default) -->
+    <div id="copyMessage" class="fixed bottom-5 right-5 z-50 p-3 bg-green-500 text-white rounded-lg shadow-xl opacity-0 transition-opacity duration-300 pointer-events-none">
+        Link copied to clipboard!
     </div>
-    <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
-      <button id="showAll" class="btn">Show all paragraphs</button>
-      <button id="toggleEditMode" class="btn primary">Toggle Edit Mode</button>
-    </div>
-  </header>
 
-  <nav class="toc" id="toc">
-    <h3>Contents</h3>
-    <ul id="toc-list">
-      <!-- JS populates -->
-    </ul>
-    <hr style="margin:12px 0; opacity:.06">
-    <small style="color:var(--muted)">Tip: click the copy icon beside any section title to copy a link like <code>?paragraph=life</code>.</small>
-  </nav>
+    <!-- JavaScript for Copy Functionality -->
+    <script>
+        /**
+         * Copies the shareable URL for a given paragraph ID to the clipboard.
+         * @param {string} paragraphId - The unique ID of the section to link to.
+         */
+        function copyShareLink(paragraphId) {
+            // Construct the full URL, using the current location and appending the paragraph ID
+            const shareUrl = window.location.origin + window.location.pathname + `?paragraphid=${paragraphId}`;
+            
+            // Use document.execCommand('copy') as navigator.clipboard.writeText() is often restricted in iFrames
+            const tempInput = document.createElement('input');
+            tempInput.value = shareUrl;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showCopyMessage();
+                } else {
+                    console.error('Failed to copy text using execCommand');
+                }
+            } catch (err) {
+                console.error('Error in copying command:', err);
+                // Fallback attempt (might still fail)
+                navigator.clipboard.writeText(shareUrl).then(showCopyMessage).catch(e => {
+                     console.error("Fallback clipboard write failed:", e);
+                });
+            } finally {
+                document.body.removeChild(tempInput);
+            }
+        }
 
-  <main id="main">
-    <!-- Section template:
-         <section class="card" id="para-<id>" data-paragraph="<id>"> ... </section>
-    -->
-    <section class="card" id="para-intro" data-paragraph="intro">
-      <div class="section-header">
-        <h2>Introduction to Cats</h2>
-        <div class="link-icon">
-          <button class="link-btn" title="Copy link to this paragraph" data-paragraph="intro" onclick="copyParagraphLink(event)">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 7H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M16 3h5v5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M21 3L10 14" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-            Copy link
-          </button>
-        </div>
-      </div>
-      <small class="desc">A short overview rendered from markdown.</small>
+        /**
+         * Displays a temporary success message after copying the link.
+         */
+        function showCopyMessage() {
+            const message = document.getElementById('copyMessage');
+            message.classList.remove('opacity-0');
+            message.classList.add('opacity-100');
 
-      <div class="toolbar">
-        <button class="btn" onclick="toggleRaw('intro')">View Raw MD</button>
-        <button class="btn" onclick="downloadMarkdown('intro')">Download MD</button>
-      </div>
+            setTimeout(() => {
+                message.classList.remove('opacity-100');
+                message.classList.add('opacity-0');
+            }, 2000); // Hide after 2 seconds
+        }
 
-      <div id="render-intro" class="md-render"></div>
-      <textarea id="md-intro" class="md-editor" style="display:none;">
-# Welcome to Cats Wiki
+        // Optional: Scroll to the paragraph if a ?paragraphid is present in the URL on load
+        window.onload = function() {
+            const params = new URLSearchParams(window.location.search);
+            const idToScrollTo = params.get('paragraphid');
 
-Cats ( *Felis catus* ) are small, carnivorous mammals that are popular as companion animals.
+            if (idToScrollTo) {
+                const targetElement = document.getElementById(idToScrollTo);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    // Optional: Briefly highlight the element to show it was linked to
+                    targetElement.classList.add('bg-yellow-100', 'ring-4', 'ring-yellow-400');
+                    setTimeout(() => {
+                        targetElement.classList.remove('bg-yellow-100', 'ring-4', 'ring-yellow-400');
+                    }, 3000);
+                }
+            }
+        };
+    </script>
 
-- Lifespan: 12–18 years (domestic)
-- Behavior: solitary hunters, but can be social
-- Fun fact: a cat's whiskers are highly sensitive tactile hairs called *vibrissae*.
-      </textarea>
-    </section>
-
-    <section class="card" id="para-breeds" data-paragraph="breeds">
-      <div class="section-header">
-        <h2>Popular Breeds</h2>
-        <div class="link-icon">
-          <button class="link-btn" data-paragraph="breeds" onclick="copyParagraphLink(event)" title="Copy link to this paragraph">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 7H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M16 3h5v5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M21 3L10 14" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-            Copy link
-          </button>
-        </div>
-      </div>
-      <small class="desc">Images and short descriptions of a few breeds.</small>
-
-      <div class="md-render" id="render-breeds"></div>
-
-      <div class="image-grid" id="breeds-grid">
-        <img src="https://placekitten.com/600/400" alt="Kitten 1" data-caption="Domestic Short Hair" onclick="openLightbox(this)">
-        <img src="https://placekitten.com/601/400" alt="Kitten 2" data-caption="Tabby Cat" onclick="openLightbox(this)">
-        <img src="https://placekitten.com/602/400" alt="Kitten 3" data-caption="Siamese-ish" onclick="openLightbox(this)">
-      </div>
-    </section>
-
-    <section class="card" id="para-behavior" data-paragraph="behavior">
-      <div class="section-header">
-        <h2>Behavior & Communication</h2>
-        <div class="link-icon">
-          <button class="link-btn" data-paragraph="behavior" onclick="copyParagraphLink(event)" title="Copy link to this paragraph">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 7H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M16 3h5v5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M21 3L10 14" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-            Copy link
-          </button>
-        </div>
-      </div>
-      <small class="desc">How cats talk and what common behaviors mean.</small>
-
-      <pre class="code"><code>// Example: pseudo code showing a simple 'purr' detector
-function onPetting(cat) {
-  if (cat.feelsSafe) {
-    cat.purr();
-  } else {
-    cat.maybeBite();
-  }
-}
-      </code></pre>
-
-      <div class="md-render" id="render-behavior"></div>
-    </section>
-
-    <section class="card" id="para-care" data-paragraph="care">
-      <div class="section-header">
-        <h2>Care & Health</h2>
-        <div class="link-icon">
-          <button class="link-btn" data-paragraph="care" onclick="copyParagraphLink(event)" title="Copy link to this paragraph">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 7H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M16 3h5v5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M21 3L10 14" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-            Copy link
-          </button>
-        </div>
-      </div>
-      <small class="desc">Feeding, grooming, vets, and first aid basics.</small>
-
-      <div class="toolbar">
-        <button class="btn" onclick="editSection('care')">Edit section</button>
-      </div>
-
-      <div class="md-render" id="render-care"></div>
-      <textarea id="md-care" class="md-editor" style="display:none;">
-## Care basics
-
-- Food: feed a balanced diet appropriate for age.
-- Water: always fresh water available.
-- Litter: scoop daily, full clean weekly.
-- Vet: annual checkups + vaccines as needed.
-
-**Emergency**: if the cat is breathing oddly, bleeding, or unresponsive — contact a vet immediately.
-      </textarea>
-    </section>
-
-    <section class="card" id="para-fun" data-paragraph="fun-facts">
-      <div class="section-header">
-        <h2>Fun Facts</h2>
-        <div class="link-icon">
-          <button class="link-btn" data-paragraph="fun-facts" onclick="copyParagraphLink(event)" title="Copy link to this paragraph">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 7H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M16 3h5v5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M21 3L10 14" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-            Copy link
-          </button>
-        </div>
-      </div>
-      <small class="desc">Short, shareable facts — perfect for social posts.</small>
-
-      <div class="md-render" id="render-fun"></div>
-    </section>
-
-  </main>
-</div>
-
-<!-- Lightbox -->
-<div class="lightbox" id="lightbox" onclick="closeLightbox()">
-  <img id="lightbox-img" src="" alt="">
-</div>
-
-<div class="toast" id="toast">Link copied!</div>
-
-<script>
-/* -- Data: initial markdown for certain sections (editable) -- */
-const MD_CONTENT = {
-  "intro": document.getElementById('md-intro').value.trim(),
-  "breeds": `### A few breeds
-
-**Domestic Short-haired** - common and varied.
-
-**Siamese** - talkative with striking blue eyes.
-
-**Maine Coon** - large, friendly, tufted ears.
-
-> Cats were domesticated about 9,000 years ago in the Near East.`,
-  "behavior": `### Communication
-
-Cats use body language (ears, tails), vocalizations (meow, purr, hiss), and scent marking.
-
-- Tail up = friendly
-- Slow blink = trust
-- Ear flatten = fear or aggression`,
-  "care": document.getElementById('md-care').value.trim(),
-  "fun-facts": `- A cat can make over 100 different sounds (humans: ~10).
-- Adult cats sleep 12–16 hours per day.
-- Cats have a reflective layer in the eye called the *tapetum lucidum* — that's why eyes glow in the dark.`
-};
-
-/* Renderers */
-function renderAll(){
-  for(const id in MD_CONTENT){
-    const el = document.getElementById('render-' + id);
-    if(!el) continue;
-    el.innerHTML = marked.parse(MD_CONTENT[id] || '');
-  }
-  // highlight
-  document.querySelectorAll('pre code').forEach((block) => {
-    try {hljs.highlightElement(block);} catch(e){}
-  });
-}
-
-/* Table of contents build */
-function buildTOC(){
-  const tocList = document.getElementById('toc-list');
-  tocList.innerHTML = '';
-  document.querySelectorAll('[data-paragraph]').forEach(section=>{
-    const pid = section.getAttribute('data-paragraph');
-    const title = section.querySelector('h2')?.innerText || pid;
-    const a = document.createElement('a');
-    a.href = getParagraphURL(pid);
-    a.innerText = title;
-    a.onclick = (e)=>{ e.preventDefault(); goToParagraph(pid, true); };
-    const li = document.createElement('li');
-    li.appendChild(a);
-    tocList.appendChild(li);
-  });
-}
-
-/* Utility: get URL with ?paragraph=... */
-function getParagraphURL(id){
-  const u = new URL(window.location.href);
-  u.searchParams.set('paragraph', id);
-  return u.toString();
-}
-
-/* Copy link */
-function copyParagraphLink(e){
-  const pid = e.currentTarget.getAttribute('data-paragraph');
-  const link = getParagraphURL(pid);
-  navigator.clipboard?.writeText(link).then(()=> {
-    showToast('Link copied to clipboard');
-    // optional: update history so clicking icon navigates
-    history.replaceState(null,'', '?paragraph=' + pid);
-  }).catch(()=> {
-    showToast('Couldn\\'t copy — select the link: ' + link);
-    prompt('Copy this link:', link);
-  });
-}
-
-/* Show a temporary toast */
-function showToast(msg){
-  const t = document.getElementById('toast');
-  t.innerText = msg;
-  t.style.display = 'block';
-  setTimeout(()=> t.style.display='none', 1400);
-}
-
-/* Scroll and highlight a paragraph */
-function goToParagraph(id, smooth = false){
-  const el = document.querySelector('[data-paragraph="'+id+'"]');
-  if(!el) return;
-  const rectTop = el.getBoundingClientRect().top + window.scrollY - 20;
-  if(smooth) window.scrollTo({top: rectTop, behavior:'smooth'});
-  else window.scrollTo(0, rectTop);
-  // temporary highlight
-  el.classList.add('highlighted');
-  setTimeout(()=> el.classList.remove('highlighted'), 1900);
-  // update address bar without reload
-  history.replaceState(null, '', '?paragraph=' + id);
-}
-
-/* Lightbox */
-function openLightbox(img){
-  const box = document.getElementById('lightbox');
-  const bi = document.getElementById('lightbox-img');
-  bi.src = img.currentSrc || img.src;
-  bi.alt = img.alt || img.dataset.caption || '';
-  box.style.display = 'flex';
-}
-function closeLightbox(){ document.getElementById('lightbox').style.display='none'; }
-
-/* Edit / Raw viewing features */
-let globalEditMode = false;
-function toggleRaw(id){
-  const area = document.getElementById('md-'+id);
-  const view = document.getElementById('render-'+id);
-  if(!area) return;
-  const showing = area.style.display !== 'none';
-  if(showing){
-    // hide editor & update model
-    MD_CONTENT[id] = area.value;
-    area.style.display = 'none';
-    view.style.display = '';
-    renderAll();
-  } else {
-    area.style.display = '';
-    view.style.display = 'none';
-    area.focus();
-  }
-}
-function toggleEditMode(){
-  globalEditMode = !globalEditMode;
-  document.querySelectorAll('.md-editor').forEach(txt=>{
-    txt.style.display = globalEditMode ? '' : 'none';
-  });
-  document.querySelectorAll('.md-render').forEach(r=>{
-    r.style.display = globalEditMode ? 'none' : '';
-  });
-  document.getElementById('toggleEditMode').innerText = globalEditMode ? 'Exit Edit Mode' : 'Toggle Edit Mode';
-}
-document.getElementById('toggleEditMode').addEventListener('click', toggleEditMode);
-
-/* Edit specific section (shows textarea if exists) */
-function editSection(id){
-  const area = document.getElementById('md-'+id);
-  const view = document.getElementById('render-'+id);
-  if(!area){
-    alert('This section is not editable in this demo.');
-    return;
-  }
-  area.style.display = '';
-  view.style.display = 'none';
-  area.focus();
-}
-
-/* Download markdown for a section */
-function downloadMarkdown(id){
-  const md = MD_CONTENT[id] || document.getElementById('md-'+id)?.value || '';
-  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = `cats-${id}.md`;
-  document.body.appendChild(a); a.click();
-  a.remove(); URL.revokeObjectURL(url);
-}
-
-/* Show all paragraphs in case query param is absent */
-document.getElementById('showAll').addEventListener('click', ()=> {
-  // scroll to top of main
-  document.querySelector('main').scrollTop = 0;
-  window.scrollTo({top:0, behavior:'smooth'});
-});
-
-/* Save edits when textareas are changed */
-document.querySelectorAll('.md-editor').forEach(area=>{
-  area.addEventListener('input', (e)=>{
-    const id = area.id.replace(/^md-/, '');
-    MD_CONTENT[id] = area.value;
-    // live render while editing is off
-    if(!globalEditMode){
-      const view = document.getElementById('render-'+id);
-      if(view){ view.innerHTML = marked.parse(MD_CONTENT[id]); hljs.highlightAll(); }
-    }
-  });
-});
-
-/* On load */
-renderAll();
-buildTOC();
-
-/* When page opened with ?paragraph=... scroll there */
-(function handleInitialParam(){
-  const params = new URLSearchParams(window.location.search);
-  const pid = params.get('paragraph');
-  if(pid){
-    // small delay so layout settles
-    setTimeout(()=> goToParagraph(pid, true), 160);
-  }
-})();
-
-/* Accessibility: allow copying current section from keyboard if focused on a header button */
-document.addEventListener('keydown', (e)=>{
-  if((e.ctrlKey || e.metaKey) && e.key === 'k'){
-    // copy the first visible paragraph link as an example
-    const first = document.querySelector('[data-paragraph]');
-    if(first){
-      const pid = first.getAttribute('data-paragraph');
-      navigator.clipboard?.writeText(getParagraphURL(pid)).then(()=> showToast('Link copied'));
-    }
-  }
-});
-
-/* Highlight code blocks initially */
-hljs.highlightAll();
-</script>
 </body>
 </html>
+
