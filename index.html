@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Cats Wiki — Copyable Paragraph Links</title>
+
+<!-- Marked for Markdown, Highlight.js for code blocks -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/highlight.js@11.8.0/styles/github.min.css">
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.8.0/lib/highlight.min.js"></script>
+
+<style>
+  :root{
+    --bg:#0f1720; --card:#0b1220; --muted:#9aa4b2; --accent:#f59e0b;
+    --glass: rgba(255,255,255,0.03);
+    color-scheme: dark;
+  }
+  html,body{height:100%; margin:0; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+  body{background: linear-gradient(180deg,#071021 0%, #0f1720 100%); color:#e6eef6; padding:20px;}
+  .wrap{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:280px 1fr;gap:20px;}
+  header{grid-column:1/-1; display:flex; gap:16px; align-items:center; margin-bottom:6px;}
+  header h1{font-size:20px;margin:0}
+  header p{margin:0;color:var(--muted);font-size:13px}
+  .toc{background:var(--glass); border-radius:10px; padding:14px; height:calc(100vh - 150px); overflow:auto}
+  .toc h3{margin:0 0 8px 0; font-size:14px}
+  .toc ul{padding-left:6px; margin:0; list-style:none}
+  .toc a{display:block; padding:6px 8px; border-radius:6px; color:var(--muted); text-decoration:none; font-size:14px}
+  .toc a:hover{background:rgba(255,255,255,0.02); color:#fff}
+  main{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:18px;border-radius:12px; overflow:auto; max-height:calc(100vh - 120px)}
+  section.card{margin-bottom:20px;padding:14px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent); box-shadow: 0 2px 12px rgba(2,6,23,0.6)}
+  .section-header{display:flex; align-items:center; gap:8px}
+  .section-header h2{margin:0; font-size:18px}
+  .link-icon{margin-left:auto; display:flex; gap:6px; align-items:center}
+  .link-btn{background:transparent;border:0;color:var(--muted); padding:6px;border-radius:6px; cursor:pointer; display:inline-flex; align-items:center; gap:6px}
+  .link-btn:hover{background:rgba(255,255,255,0.02); color:var(--accent)}
+  small.desc{color:var(--muted); display:block;margin-top:6px}
+  .md-render{margin-top:12px; line-height:1.6}
+  .md-render img{max-width:100%; border-radius:8px; cursor:pointer}
+  .toolbar{display:flex;gap:8px;margin-bottom:10px}
+  .btn{background:transparent;border:1px solid rgba(255,255,255,0.04); padding:8px 10px;border-radius:8px;color:var(--muted); cursor:pointer}
+  .btn.primary{border-color:var(--accent); color:var(--accent)}
+  textarea.md-editor{width:100%; min-height:160px; background:transparent; color:inherit;border:1px dashed rgba(255,255,255,0.03); padding:10px;border-radius:8px; font-family:monospace; resize:vertical}
+  .image-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(160px,1fr)); gap:10px;margin-top:10px}
+  .image-grid img{width:100%; height:120px; object-fit:cover; border-radius:8px; cursor:pointer; display:block}
+  .code{background:#021224;padding:12px;border-radius:8px;overflow:auto}
+  .toast{position:fixed; right:20px; bottom:20px; background:#072032; color:#dff8ff; padding:10px 14px; border-radius:8px; box-shadow:0 6px 20px rgba(2,8,23,0.7); display:none}
+  .highlighted{outline:4px solid rgba(245,158,11,0.12); transition:outline .25s}
+  /* Lightbox */
+  .lightbox{position:fixed; inset:0; background:rgba(0,0,0,0.8); display:none;align-items:center;justify-content:center;z-index:60}
+  .lightbox img{max-width:95%; max-height:95%; border-radius:8px}
+  @media(max-width:880px){.wrap{grid-template-columns:1fr;}.toc{height:auto; order:2}.header{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Cats Wiki</h1>
+      <p>Small, fast wiki about cats with markdown, images, and copiable paragraph links (use <code>?paragraph=ID</code>).</p>
+    </div>
+    <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
+      <button id="showAll" class="btn">Show all paragraphs</button>
+      <button id="toggleEditMode" class="btn primary">Toggle Edit Mode</button>
+    </div>
+  </header>
+
+  <nav class="toc" id="toc">
+    <h3>Contents</h3>
+    <ul id="toc-list">
+      <!-- JS populates -->
+    </ul>
+    <hr style="margin:12px 0; opacity:.06">
+    <small style="color:var(--muted)">Tip: click the copy icon beside any section title to copy a link like <code>?paragraph=life</code>.</small>
+  </nav>
+
+  <main id="main">
+    <!-- Section template:
+         <section class="card" id="para-<id>" data-paragraph="<id>"> ... </section>
+    -->
+    <section class="card" id="para-intro" data-paragraph="intro">
+      <div class="section-header">
+        <h2>Introduction to Cats</h2>
+        <div class="link-icon">
+          <button class="link-btn" title="Copy link to this paragraph" data-paragraph="intro" onclick="copyParagraphLink(event)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 7H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M16 3h5v5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M21 3L10 14" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            Copy link
+          </button>
+        </div>
+      </div>
+      <small class="desc">A short overview rendered from markdown.</small>
+
+      <div class="toolbar">
+        <button class="btn" onclick="toggleRaw('intro')">View Raw MD</button>
+        <button class="btn" onclick="downloadMarkdown('intro')">Download MD</button>
+      </div>
+
+      <div id="render-intro" class="md-render"></div>
+      <textarea id="md-intro" class="md-editor" style="display:none;">
+# Welcome to Cats Wiki
+
+Cats ( *Felis catus* ) are small, carnivorous mammals that are popular as companion animals.
+
+- Lifespan: 12–18 years (domestic)
+- Behavior: solitary hunters, but can be social
+- Fun fact: a cat's whiskers are highly sensitive tactile hairs called *vibrissae*.
+      </textarea>
+    </section>
+
+    <section class="card" id="para-breeds" data-paragraph="breeds">
+      <div class="section-header">
+        <h2>Popular Breeds</h2>
+        <div class="link-icon">
+          <button class="link-btn" data-paragraph="breeds" onclick="copyParagraphLink(event)" title="Copy link to this paragraph">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 7H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M16 3h5v5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M21 3L10 14" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            Copy link
+          </button>
+        </div>
+      </div>
+      <small class="desc">Images and short descriptions of a few breeds.</small>
+
+      <div class="md-render" id="render-breeds"></div>
+
+      <div class="image-grid" id="breeds-grid">
+        <img src="https://placekitten.com/600/400" alt="Kitten 1" data-caption="Domestic Short Hair" onclick="openLightbox(this)">
+        <img src="https://placekitten.com/601/400" alt="Kitten 2" data-caption="Tabby Cat" onclick="openLightbox(this)">
+        <img src="https://placekitten.com/602/400" alt="Kitten 3" data-caption="Siamese-ish" onclick="openLightbox(this)">
+      </div>
+    </section>
+
+    <section class="card" id="para-behavior" data-paragraph="behavior">
+      <div class="section-header">
+        <h2>Behavior & Communication</h2>
+        <div class="link-icon">
+          <button class="link-btn" data-paragraph="behavior" onclick="copyParagraphLink(event)" title="Copy link to this paragraph">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 7H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M16 3h5v5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M21 3L10 14" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            Copy link
+          </button>
+        </div>
+      </div>
+      <small class="desc">How cats talk and what common behaviors mean.</small>
+
+      <pre class="code"><code>// Example: pseudo code showing a simple 'purr' detector
+function onPetting(cat) {
+  if (cat.feelsSafe) {
+    cat.purr();
+  } else {
+    cat.maybeBite();
+  }
+}
+      </code></pre>
+
+      <div class="md-render" id="render-behavior"></div>
+    </section>
+
+    <section class="card" id="para-care" data-paragraph="care">
+      <div class="section-header">
+        <h2>Care & Health</h2>
+        <div class="link-icon">
+          <button class="link-btn" data-paragraph="care" onclick="copyParagraphLink(event)" title="Copy link to this paragraph">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 7H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M16 3h5v5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M21 3L10 14" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            Copy link
+          </button>
+        </div>
+      </div>
+      <small class="desc">Feeding, grooming, vets, and first aid basics.</small>
+
+      <div class="toolbar">
+        <button class="btn" onclick="editSection('care')">Edit section</button>
+      </div>
+
+      <div class="md-render" id="render-care"></div>
+      <textarea id="md-care" class="md-editor" style="display:none;">
+## Care basics
+
+- Food: feed a balanced diet appropriate for age.
+- Water: always fresh water available.
+- Litter: scoop daily, full clean weekly.
+- Vet: annual checkups + vaccines as needed.
+
+**Emergency**: if the cat is breathing oddly, bleeding, or unresponsive — contact a vet immediately.
+      </textarea>
+    </section>
+
+    <section class="card" id="para-fun" data-paragraph="fun-facts">
+      <div class="section-header">
+        <h2>Fun Facts</h2>
+        <div class="link-icon">
+          <button class="link-btn" data-paragraph="fun-facts" onclick="copyParagraphLink(event)" title="Copy link to this paragraph">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 7H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M16 3h5v5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M21 3L10 14" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            Copy link
+          </button>
+        </div>
+      </div>
+      <small class="desc">Short, shareable facts — perfect for social posts.</small>
+
+      <div class="md-render" id="render-fun"></div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<div class="toast" id="toast">Link copied!</div>
+
+<script>
+/* -- Data: initial markdown for certain sections (editable) -- */
+const MD_CONTENT = {
+  "intro": document.getElementById('md-intro').value.trim(),
+  "breeds": `### A few breeds
+
+**Domestic Short-haired** - common and varied.
+
+**Siamese** - talkative with striking blue eyes.
+
+**Maine Coon** - large, friendly, tufted ears.
+
+> Cats were domesticated about 9,000 years ago in the Near East.`,
+  "behavior": `### Communication
+
+Cats use body language (ears, tails), vocalizations (meow, purr, hiss), and scent marking.
+
+- Tail up = friendly
+- Slow blink = trust
+- Ear flatten = fear or aggression`,
+  "care": document.getElementById('md-care').value.trim(),
+  "fun-facts": `- A cat can make over 100 different sounds (humans: ~10).
+- Adult cats sleep 12–16 hours per day.
+- Cats have a reflective layer in the eye called the *tapetum lucidum* — that's why eyes glow in the dark.`
+};
+
+/* Renderers */
+function renderAll(){
+  for(const id in MD_CONTENT){
+    const el = document.getElementById('render-' + id);
+    if(!el) continue;
+    el.innerHTML = marked.parse(MD_CONTENT[id] || '');
+  }
+  // highlight
+  document.querySelectorAll('pre code').forEach((block) => {
+    try {hljs.highlightElement(block);} catch(e){}
+  });
+}
+
+/* Table of contents build */
+function buildTOC(){
+  const tocList = document.getElementById('toc-list');
+  tocList.innerHTML = '';
+  document.querySelectorAll('[data-paragraph]').forEach(section=>{
+    const pid = section.getAttribute('data-paragraph');
+    const title = section.querySelector('h2')?.innerText || pid;
+    const a = document.createElement('a');
+    a.href = getParagraphURL(pid);
+    a.innerText = title;
+    a.onclick = (e)=>{ e.preventDefault(); goToParagraph(pid, true); };
+    const li = document.createElement('li');
+    li.appendChild(a);
+    tocList.appendChild(li);
+  });
+}
+
+/* Utility: get URL with ?paragraph=... */
+function getParagraphURL(id){
+  const u = new URL(window.location.href);
+  u.searchParams.set('paragraph', id);
+  return u.toString();
+}
+
+/* Copy link */
+function copyParagraphLink(e){
+  const pid = e.currentTarget.getAttribute('data-paragraph');
+  const link = getParagraphURL(pid);
+  navigator.clipboard?.writeText(link).then(()=> {
+    showToast('Link copied to clipboard');
+    // optional: update history so clicking icon navigates
+    history.replaceState(null,'', '?paragraph=' + pid);
+  }).catch(()=> {
+    showToast('Couldn\\'t copy — select the link: ' + link);
+    prompt('Copy this link:', link);
+  });
+}
+
+/* Show a temporary toast */
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.innerText = msg;
+  t.style.display = 'block';
+  setTimeout(()=> t.style.display='none', 1400);
+}
+
+/* Scroll and highlight a paragraph */
+function goToParagraph(id, smooth = false){
+  const el = document.querySelector('[data-paragraph="'+id+'"]');
+  if(!el) return;
+  const rectTop = el.getBoundingClientRect().top + window.scrollY - 20;
+  if(smooth) window.scrollTo({top: rectTop, behavior:'smooth'});
+  else window.scrollTo(0, rectTop);
+  // temporary highlight
+  el.classList.add('highlighted');
+  setTimeout(()=> el.classList.remove('highlighted'), 1900);
+  // update address bar without reload
+  history.replaceState(null, '', '?paragraph=' + id);
+}
+
+/* Lightbox */
+function openLightbox(img){
+  const box = document.getElementById('lightbox');
+  const bi = document.getElementById('lightbox-img');
+  bi.src = img.currentSrc || img.src;
+  bi.alt = img.alt || img.dataset.caption || '';
+  box.style.display = 'flex';
+}
+function closeLightbox(){ document.getElementById('lightbox').style.display='none'; }
+
+/* Edit / Raw viewing features */
+let globalEditMode = false;
+function toggleRaw(id){
+  const area = document.getElementById('md-'+id);
+  const view = document.getElementById('render-'+id);
+  if(!area) return;
+  const showing = area.style.display !== 'none';
+  if(showing){
+    // hide editor & update model
+    MD_CONTENT[id] = area.value;
+    area.style.display = 'none';
+    view.style.display = '';
+    renderAll();
+  } else {
+    area.style.display = '';
+    view.style.display = 'none';
+    area.focus();
+  }
+}
+function toggleEditMode(){
+  globalEditMode = !globalEditMode;
+  document.querySelectorAll('.md-editor').forEach(txt=>{
+    txt.style.display = globalEditMode ? '' : 'none';
+  });
+  document.querySelectorAll('.md-render').forEach(r=>{
+    r.style.display = globalEditMode ? 'none' : '';
+  });
+  document.getElementById('toggleEditMode').innerText = globalEditMode ? 'Exit Edit Mode' : 'Toggle Edit Mode';
+}
+document.getElementById('toggleEditMode').addEventListener('click', toggleEditMode);
+
+/* Edit specific section (shows textarea if exists) */
+function editSection(id){
+  const area = document.getElementById('md-'+id);
+  const view = document.getElementById('render-'+id);
+  if(!area){
+    alert('This section is not editable in this demo.');
+    return;
+  }
+  area.style.display = '';
+  view.style.display = 'none';
+  area.focus();
+}
+
+/* Download markdown for a section */
+function downloadMarkdown(id){
+  const md = MD_CONTENT[id] || document.getElementById('md-'+id)?.value || '';
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `cats-${id}.md`;
+  document.body.appendChild(a); a.click();
+  a.remove(); URL.revokeObjectURL(url);
+}
+
+/* Show all paragraphs in case query param is absent */
+document.getElementById('showAll').addEventListener('click', ()=> {
+  // scroll to top of main
+  document.querySelector('main').scrollTop = 0;
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+
+/* Save edits when textareas are changed */
+document.querySelectorAll('.md-editor').forEach(area=>{
+  area.addEventListener('input', (e)=>{
+    const id = area.id.replace(/^md-/, '');
+    MD_CONTENT[id] = area.value;
+    // live render while editing is off
+    if(!globalEditMode){
+      const view = document.getElementById('render-'+id);
+      if(view){ view.innerHTML = marked.parse(MD_CONTENT[id]); hljs.highlightAll(); }
+    }
+  });
+});
+
+/* On load */
+renderAll();
+buildTOC();
+
+/* When page opened with ?paragraph=... scroll there */
+(function handleInitialParam(){
+  const params = new URLSearchParams(window.location.search);
+  const pid = params.get('paragraph');
+  if(pid){
+    // small delay so layout settles
+    setTimeout(()=> goToParagraph(pid, true), 160);
+  }
+})();
+
+/* Accessibility: allow copying current section from keyboard if focused on a header button */
+document.addEventListener('keydown', (e)=>{
+  if((e.ctrlKey || e.metaKey) && e.key === 'k'){
+    // copy the first visible paragraph link as an example
+    const first = document.querySelector('[data-paragraph]');
+    if(first){
+      const pid = first.getAttribute('data-paragraph');
+      navigator.clipboard?.writeText(getParagraphURL(pid)).then(()=> showToast('Link copied'));
+    }
+  }
+});
+
+/* Highlight code blocks initially */
+hljs.highlightAll();
+</script>
+</body>
+</html>
